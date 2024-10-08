@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 // Allocate the graph
 Graph make_graph(int n) {
@@ -41,4 +42,17 @@ void print_graph(Graph* g) {
 // Adds an edge connecting i->j with capacity c
 void add_capacity(Graph *g, int i, int j, int c) {
 	g->adj_mat[i][j] = c;
+}
+
+//Randomize the capacities of a graph
+void randomize_graph(Graph* g, int max) {
+	int n = g->num_vtx;
+	srand(time(NULL));
+
+	for (int i=0; i<n; i++) {
+		for (int j=0; j<n; j++) {
+			g->adj_mat[i][j] = rand() % max;
+		}
+		g->adj_mat[i][i] = 0;
+	}
 }
