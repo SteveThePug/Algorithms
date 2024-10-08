@@ -124,15 +124,21 @@ int* dfs_find_path(Graph* g, int u, int v, int* len) {
 
 int* bfs_find_path(Graph* g, int u, int v, int* len) {
 	int n = g->num_vtx;
-	// Make a graph for checking if we have looked at a value or not. 1=seen 0=notseen
+	// Make a list for checking if we have looked at the vertex
 	int* chk_vtx = calloc(n, sizeof(int)); 
-	// Make a queue for what we should explore
+	chk_vtx[u] = 1;
+	// Make a stack for what verticies we should explore first and add the start vertex
+	int que_count = 1;
 	int* que = calloc(n, sizeof(int)); 
-	fill_array(que, n, -1);
+	que[0] = u;
+	// Allocate a path with at most n verticies
+	int* path = malloc(n*sizeof(int));
+	int path_len = 0;
 
 	free(que);
 	free(chk_vtx);
-	return (int*)NULL;
+	*len = 0;
+	return realloc(path, 0);
 }
 
 // Helper function for printing an array

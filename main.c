@@ -19,8 +19,13 @@ int main(int argc, char* argv[]) {
 	int* arr = vertex_neighbors(&g, rand()%n, &len);
 
 	int p_len;
+
 	int u = rand()%n;
 	int v = rand()%n;
+	while (u == v) {
+		int v = rand()%n;
+	}
+
 	int* path = dfs_find_path(&g, u, v, &p_len);
 	printf("u:%2d, v:%2d\n", u, v);
 	print_array(path, p_len);
