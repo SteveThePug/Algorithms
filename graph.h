@@ -15,8 +15,8 @@ int* vertex_neighbors(Graph* g, int u, int* len);
 
 void randomize_graph(Graph* g, int max);
 
-int* dfs_find_path(Graph* g, int u, int v);
-int* bfs_find_path(Graph* g, int u, int v);
+int* dfs_find_path(Graph* g, int u, int v, int* len);
+int* bfs_find_path(Graph* g, int u, int v, int* len);
 
 void print_array(int* arr, int n);
 void fill_array(int* arr, int n, int v);

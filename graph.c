@@ -76,24 +76,53 @@ void randomize_graph(Graph* g, int max) {
 
 
 //Find a path from vertex u to vertex v
-int* dfs_find_path(Graph* g, int u, int v) {
+int* dfs_find_path(Graph* g, int u, int v, int* len) {
 	int n = g->num_vtx;
 	// Make a list for checking if we have looked at the vertex
 	int* chk_vtx = calloc(n, sizeof(int)); 
-	// Make a stack for what verticies we should explore first (-1 = not a vtx)
+	chk_vtx[u] = 1;
+	// Make a stack for what verticies we should explore first and add the start vertex
+	int stk_count = 1;
 	int* stk = calloc(n, sizeof(int)); 
-	fill_array(stk, n, -1);
+	stk[0] = u;
+	// Allocate a path with at most n verticies
+	int* path = malloc(n*sizeof(int));
+	int path_len = 0;
 
-	
-	
-	print_array(stk,n);
+	//Begin exploring
+	while (stk_count > 0) {
+		int current = stk[--stk_count];
+
+		path[path_len++] = current;
+
+		if (current == v) {
+			free(stk);
+			free(chk_vtx);
+			*len = path_len;
+			return realloc(path, path_len * sizeof(int));
+		}
+
+		int nbr_len;
+		int* nbrs = vertex_neighbors(g, current, &nbr_len);
+
+		for (int i=0;i<nbr_len;i++) {
+			int nbr = nbrs[i];
+			if (!chk_vtx[nbr]) {
+				stk[stk_count++] = nbr;
+				chk_vtx[nbr] = 1;
+			}
+		}
+
+		free(nbrs);
+	}
 
 	free(stk);
 	free(chk_vtx);
-	return (int*)NULL;
+	*len = 0;
+	return realloc(path, 0);
 }
 
-int* bfs_find_path(Graph* g, int u, int v) {
+int* bfs_find_path(Graph* g, int u, int v, int* len) {
 	int n = g->num_vtx;
 	// Make a graph for checking if we have looked at a value or not. 1=seen 0=notseen
 	int* chk_vtx = calloc(n, sizeof(int)); 
