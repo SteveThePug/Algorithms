@@ -1,5 +1,8 @@
 #ifndef GRAPH_H
 #define GRAPH_H
+
+#include "array.h"
+
 typedef struct {
 	int** adj_mat;
 	int num_vtx;
@@ -11,14 +14,20 @@ void free_graph(Graph* g);
 void print_graph(Graph* g);
 
 void add_edge(Graph* g, int u, int v, int c);
-int* vertex_neighbors(Graph* g, int u, int* len);
+Array* vertex_neighbors(Graph* g, int u);
 
 void randomize_graph(Graph* g, int max);
 
-int* dfs_find_path(Graph* g, int u, int v, int* len);
-int* bfs_find_path(Graph* g, int u, int v, int* len);
+/**
+ * @brief Preforms a depth first search on a graph
+ * @param g The graph to search
+ * @param u The start vertex
+ * @param v The end vertex
+ * @return Array of vertecies of the array
+ */
+Array* dfs_find_path(Graph* g, int u, int v);
+Array* bfs_find_path(Graph* g, int u, int v);
 
-void print_array(int* arr, int n);
-void fill_array(int* arr, int n, int v);
+Graph* residual_network(Graph* g, Array* path);
 
 #endif

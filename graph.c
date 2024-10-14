@@ -1,5 +1,6 @@
 #include "graph.h"
 #include "list.h"
+#include "array.h"
 
 #include <stdlib.h>
 #include <stdbool.h>
@@ -35,7 +36,10 @@ void free_graph(Graph* g) {
 void print_graph(Graph* g) {
 	int n = g->num_vtx;
 	for (int i=0; i<n; i++) {
-		print_array(g->adj_mat[i], n);
+		for (int j=0; j<n; j++) {
+			printf("%d ", g->adj_mat[i][j]);
+		}
+		printf("\n");
 	}
 }
 
@@ -45,21 +49,19 @@ void add_edge(Graph *g, int u, int v, int c) {
 }
 
 // Get the neighbors of a vertex
-int* vertex_neighbors(Graph* g, int u, int* len) {
+Array* vertex_neighbors(Graph* g, int u) {
 	int n = g->num_vtx;
 
-	int* nbrs = calloc(n, sizeof(int));
+	Array* nbrs = make_array(n);
 	int nbr_count = 0;
 
 	for (int i=0; i<n; i++) {
 		if (g->adj_mat[u][i] > 0) {
-			nbrs[nbr_count++] = i;
+			nbrs->arr[nbr_count++] = i;
 		}
 	}
 
-	int* realloc_nbrs = realloc(nbrs, sizeof(int)*n);
-	nbrs = realloc_nbrs;
-	*len = nbr_count;
+	resize_array(nbrs, nbr_count);
 	return nbrs;
 }
 
@@ -78,86 +80,73 @@ void randomize_graph(Graph* g, int max) {
 }
 
 //Find a path from vertex u to vertex v using depth first search
-int* dfs_find_path(Graph* g, int u, int v, int* len) {
+Array* dfs_find_path(Graph* g, int u, int v) {
 	int n = g->num_vtx;
 	// Make a list for checking if we have looked at the vertex
-	bool* chk_vtx = calloc(n, sizeof(bool)); 
+	Array* chk_vtx = make_array(n);
+	fill_array(chk_vtx, false);
+	chk_vtx->arr[u] = true;
 	// Make a stack for what vertices we should explore first and add the start vertex
 	List* stack = make_list();
 	push(stack, u);
 	// Allocate arrays for path and parent tracking
-	int* path = malloc(n * sizeof(int));
-	int* parent = malloc(n * sizeof(int));
-	for (int i = 0; i < n; i++) {
-		parent[i] = -1;
-	}
+	Array* path = make_array(n);
+	Array* parent = make_array(n);
+	fill_array(parent, -1);
 
 	//Begin exploring
 	while (!is_empty(stack)) {
 		int current = pop(stack);
-
 		if (current == v) {
 			// Reconstruct the path
 			int path_len = 0;
 			int node = v;
 			while (node != -1) {
-				path[path_len++] = node;
-				node = parent[node];
-			}
-			// Reverse the path
-			for (int i = 0; i < path_len / 2; i++) {
-				int temp = path[i];
-				path[i] = path[path_len - 1 - i];
-				path[path_len - 1 - i] = temp;
+				path->arr[path_len++] = node;
+				node = parent->arr[node];
 			}
 			free_list(stack);
-			free(chk_vtx);
-			free(parent);
-			*len = path_len;
-			return realloc(path, path_len * sizeof(int));
+			free_array(chk_vtx);
+			free_array(parent);
+			resize_array(path, path_len);
+			reverse_array(path);
+			return path;
 		}
 
-		if (!chk_vtx[current]) {
-			chk_vtx[current] = true;
-
-			int nbr_len;
-			int* nbrs = vertex_neighbors(g, current, &nbr_len);
-
-			for (int i = nbr_len - 1; i >= 0; i--) {
-				int nbr = nbrs[i];
-				if (!chk_vtx[nbr]) {
-					push(stack, nbr);
-					parent[nbr] = current;
-				}
+		Array* nbrs = vertex_neighbors(g, current);
+		for (int i = 0; i < nbrs->n; i++) {
+			int nbr = nbrs->arr[i];
+			if (!chk_vtx->arr[nbr]) {
+				push(stack, nbr);
+				chk_vtx->arr[nbr] = true;
+				parent->arr[nbr] = current;
 			}
-
-			free(nbrs);
 		}
+
+		free_array(nbrs);
 	}
 
 	free_list(stack);
-	free(chk_vtx);
-	free(parent);
-	free(path);
-	*len = 0;
+	free_array(chk_vtx);
+	free_array(parent);
+	free_array(path);
 	return NULL;
 }
 
 //Find a path from vertex u to vertex v using breadth first search
-int* bfs_find_path(Graph* g, int u, int v, int* len) {
+Array* bfs_find_path(Graph* g, int u, int v) {
 	int n = g->num_vtx;
-	// Make a list for checking if we have looked at the vertex
-	bool* chk_vtx = calloc(n, sizeof(bool)); 
-	chk_vtx[u] = true;
+	// Make a array for checking if we have looked at the vertex
+	Array* chk_vtx = make_array(n);
+	fill_array(chk_vtx, false);
+	chk_vtx->arr[u] = true;
 	// Make a queue for what vertices we should explore first and add the start vertex
 	List* queue = make_list();
 	enqueue(queue, u);
 	// Allocate arrays for path and parent tracking
-	int* path = malloc(n * sizeof(int));
-	int* parent = malloc(n * sizeof(int));
-	for (int i = 0; i < n; i++) {
-		parent[i] = -1;
-	}
+	Array* path = make_array(n);
+	Array* parent = make_array(n);
+	fill_array(parent, -1);
 
 	//Begin exploring
 	while (!is_empty(queue)) {
@@ -168,59 +157,35 @@ int* bfs_find_path(Graph* g, int u, int v, int* len) {
 			int path_len = 0;
 			int node = v;
 			while (node != -1) {
-				path[path_len++] = node;
-				node = parent[node];
-			}
-			// Reverse the path
-			for (int i = 0; i < path_len / 2; i++) {
-				int temp = path[i];
-				path[i] = path[path_len - 1 - i];
-				path[path_len - 1 - i] = temp;
+				path->arr[path_len++] = node;
+				node = parent->arr[node];
 			}
 			free_list(queue);
-			free(chk_vtx);
-			free(parent);
-			*len = path_len;
-			return realloc(path, path_len * sizeof(int));
+			free_array(chk_vtx);
+			free_array(parent);
+			resize_array(path, path_len);
+			reverse_array(path);
+			return path;
 		}
 
-		int nbr_len;
-		int* nbrs = vertex_neighbors(g, current, &nbr_len);
-
-		for (int i = 0; i < nbr_len; i++) {
-			int nbr = nbrs[i];
-			if (!chk_vtx[nbr]) {
+		Array* nbrs = vertex_neighbors(g, current);
+		for (int i = 0; i < nbrs->n; i++) {
+			int nbr = nbrs->arr[i];
+			if (!chk_vtx->arr[nbr]) {
 				enqueue(queue, nbr);
-				chk_vtx[nbr] = true;
-				parent[nbr] = current;
+				chk_vtx->arr[nbr] = true;
+				parent->arr[nbr] = current;
 			}
 		}
-
-		free(nbrs);
+		free_array(nbrs);
 	}
 
-	free(queue);
-	free(chk_vtx);
-	free(parent);
-	free(path);
-	*len = 0;
+	free_list(queue);
+	free_array(chk_vtx);
+	free_array(parent);
+	free_array(path);
 	return NULL;
 }
 
 //Compute the residual flow matrix
-// Graph*
-
-// Print an array
-void print_array(int* arr, int n) {
-	for (int i=0; i<n; i++) {
-		printf("%2d ", arr[i]);
-	}
-	printf("\n");
-}
-
-// Helper function for initializing an array
-void fill_array(int* arr, int n, int v) {
-	for (int i=0; i<n; i++) {
-		arr[i] = v;
-	}
-}
+// Graph* residual_network(Graph* g, int* flow, int len)
