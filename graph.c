@@ -6,20 +6,20 @@
 #include <stdio.h>
 #include <time.h>
 
-// Allocate the graph
-Graph make_graph(int n) {
-	Graph g;
-	g.num_vtx = n;
+// Allocate a graph
+Graph* make_graph(int n) {
+	Graph* g = calloc(1, sizeof(Graph));
+	g->num_vtx = n;
 
-	g.adj_mat = (int**)malloc(n * sizeof(int*));
+	g->adj_mat = (int**)malloc(n * sizeof(int*));
 	for (int i=0;i<n;i++) {
-		g.adj_mat[i] = (int*)calloc(n, sizeof(int));
+		g->adj_mat[i] = (int*)calloc(n, sizeof(int));
 	}
 
 	return g;
 }
 
-// Free the dynamically allocated graph
+// Free a graph
 void free_graph(Graph* g) {
 	int n = g->num_vtx;
 	for (int i=0; i<n; i++) {
@@ -28,6 +28,7 @@ void free_graph(Graph* g) {
 	free(g->adj_mat);
 	g->adj_mat = NULL;
 	g->num_vtx = 0;
+	free(g);
 }
 
 // Print the graph
@@ -62,7 +63,7 @@ int* vertex_neighbors(Graph* g, int u, int* len) {
 	return nbrs;
 }
 
-//Randomize the capacities of a graph
+//Generate a graph with random edge capacities
 void randomize_graph(Graph* g, int max) {
 	int n = g->num_vtx;
 	srand(time(NULL));
@@ -76,8 +77,7 @@ void randomize_graph(Graph* g, int max) {
 	}
 }
 
-
-//Find a path from vertex u to vertex v
+//Find a path from vertex u to vertex v using depth first search
 int* dfs_find_path(Graph* g, int u, int v, int* len) {
 	int n = g->num_vtx;
 	// Make a list for checking if we have looked at the vertex
@@ -143,6 +143,7 @@ int* dfs_find_path(Graph* g, int u, int v, int* len) {
 	return NULL;
 }
 
+//Find a path from vertex u to vertex v using breadth first search
 int* bfs_find_path(Graph* g, int u, int v, int* len) {
 	int n = g->num_vtx;
 	// Make a list for checking if we have looked at the vertex
@@ -206,7 +207,10 @@ int* bfs_find_path(Graph* g, int u, int v, int* len) {
 	return NULL;
 }
 
-// Helper function for printing an array
+//Compute the residual flow matrix
+// Graph*
+
+// Print an array
 void print_array(int* arr, int n) {
 	for (int i=0; i<n; i++) {
 		printf("%2d ", arr[i]);

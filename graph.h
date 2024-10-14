@@ -5,7 +5,7 @@ typedef struct {
 	int num_vtx;
 } Graph;
 
-Graph make_graph(int n);
+Graph* make_graph(int n);
 void free_graph(Graph* g);
 
 void print_graph(Graph* g);
