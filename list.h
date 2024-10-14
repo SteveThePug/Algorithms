@@ -1,7 +1,7 @@
 #ifndef LIST_H
 #define LIST_H
 
-typedef struct {
+typedef struct Node {
   int val;
   struct Node* next;
   struct Node* prev;
@@ -14,7 +14,10 @@ typedef struct {
 } List;
 
 List* makeList();
+void freeList(List* l);
+
 Node* makeNode(int i);
+void freeNode(Node* n);
 
 void printList(List* l);
 
@@ -24,7 +27,7 @@ int getFront(List* l);
 int getRear(List* l);
 int isEmpty(List* l);
 
-int enqueue(List* l, int i);
+void enqueue(List* l, int i);
 int dequeue(List* l);
 
 void push(List* l, int i);
