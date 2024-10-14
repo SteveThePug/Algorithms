@@ -1,10 +1,11 @@
 #!/bin/bash
 BUILD_DIR=.build
 
-gcc main.c list.c graph.c -o $BUILD_DIR/main.out
+gcc -g main.c list.c graph.c -o $BUILD_DIR/main.out
 
 if [ $? -eq 0 ]; then
-	$BUILD_DIR/main.out "$@"
+    echo "Compilation successful"
+    gdb $BUILD_DIR/main.out
 else
-	echo "Compilation failed"
+    echo "Compilation failed"
 fi
