@@ -39,7 +39,6 @@ void free_node(Node* n) {
 
 void print_list(List* l) {
   Node* node = l->head;
-  printf("Head <-- --> Tail\n");
   while (node != NULL) {
     printf("%d ", node->val);
     node = node->next;
@@ -143,4 +142,18 @@ int dequeue(List* l) {
   l->head = next;
   l->n--;
   return val;
+}
+
+void reverse_list(List* l) {
+  List* temp_list = make_list();
+
+  while(!is_empty(l)) {
+    push(temp_list, pop(l));
+  }
+
+  while(!is_empty(temp_list)) {
+    enqueue(l, pop(temp_list));
+  }
+
+  free_list(temp_list);
 }

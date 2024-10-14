@@ -33,5 +33,6 @@ int dequeue(List* l);
 void push(List* l, int i);
 int pop(List* l);
 int peek(List* l);
+void reverse_list(List* l);
 
 #endif
