@@ -17,7 +17,7 @@ Graph make_graph(int n) {
 	return g;
 }
 
-// Free the dynamicially allocated graph
+// Free the dynamically allocated graph
 void free_graph(Graph* g) {
 	int n = g->num_vtx;
 	for (int i=0; i<n; i++) {

@@ -13,19 +13,19 @@ typedef struct {
   int n;
 } List;
 
-List* makeList();
-void freeList(List* l);
+List* make_list();
+void free_list(List* l);
 
-Node* makeNode(int i);
-void freeNode(Node* n);
+Node* make_node(int i);
+void free_node(Node* n);
 
-void printList(List* l);
+void print_list(List* l);
 
-int getIndex(List* l, int i);
+int get_index(List* l, int i);
 
-int getFront(List* l);
-int getRear(List* l);
-int isEmpty(List* l);
+int get_head(List* l);
+int get_tail(List* l);
+int is_empty(List* l);
 
 void enqueue(List* l, int i);
 int dequeue(List* l);

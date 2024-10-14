@@ -5,37 +5,50 @@
 #include "list.h"
 
 int main(int argc, char* argv[]) {
-	int n = 10;
+	// int n = 10;
 
-	if (argc > 1) {
-		n=atoi(argv[1]);
-	}
+	// if (argc > 1) {
+	// 	n=atoi(argv[1]);
+	// }
 
-	Graph g = make_graph(n);
-	randomize_graph(&g, n);
-	print_graph(&g);
-	printf("\n");
+	// Graph g = make_graph(n);
+	// randomize_graph(&g, n);
+	// print_graph(&g);
+	// printf("\n");
 
-	int len;
-	int* arr = vertex_neighbors(&g, rand()%n, &len);
+	// int len;
+	// int* arr = vertex_neighbors(&g, rand()%n, &len);
 
-	int p_len;
+	// int p_len;
 
-	int u = rand()%n;
-	int v = rand()%n;
-	while (u == v) {
-		int v = rand()%n;
-	}
+	// int u = rand()%n;
+	// int v = rand()%n;
+	// while (u == v) {
+	// 	int v = rand()%n;
+	// }
 
-	int* path = dfs_find_path(&g, u, v, &p_len);
-	printf("u:%2d, v:%2d\n", u, v);
-	print_array(path, p_len);
+	// int* path = dfs_find_path(&g, u, v, &p_len);
+	// printf("u:%2d, v:%2d\n", u, v);
+	// print_array(path, p_len);
 
-	printf("Working on list datastructure\n");
-	List* l = makeList();	
-	push(l, 10);
-	printList(l);
+	// free_graph(&g);
 
-	free_graph(&g);
+	// List* l = makeList();	
+	// push(l, 1);
+	// push(l, 2);
+	// push(l, 3);
+	// push(l, 4);
+	// printList(l);
+	// printf("%d\n", pop(l));
+	// printf("%d\n", pop(l));
+	// printList(l);
+	// enqueue(l, 5);
+	// enqueue(l, 6);
+	// printList(l);
+	// printf("%d\n", dequeue(l));
+	// printf("%d\n", dequeue(l));
+	// printList(l);
+	// freeList(l);
+
 	return 0;
 }

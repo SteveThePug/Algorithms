@@ -2,12 +2,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-List* makeList() {
+//                 next -->
+//                 prev <--
+//            { Head, ... Tail }
+
+//         Push(Head++)
+//          Pop(Head--)
+//      Dequeue(Head--)  (Tail++)Enqueue
+//           Peek(Head)
+
+List* make_list() {
   List* list = (List*)calloc(1, sizeof(List));
   return list;
 }
 
-void freeList(List* l) {
+void free_list(List* l) {
   Node* node = l->head;
   Node* next = l->head;
   while (next != NULL) {
@@ -18,17 +27,17 @@ void freeList(List* l) {
   free(l);
 }
 
-Node* makeNode(int i) {
+Node* make_node(int i) {
   Node* n = (Node *)calloc(1, sizeof(Node));
   n->val = i;
   return n;
 }
 
-void freeNode(Node* n) {
+void free_node(Node* n) {
   free(n);
 }
 
-void printList(List* l) {
+void print_list(List* l) {
   Node* node = l->head;
   printf("Head <-- --> Tail\n");
   while (node != NULL) {
@@ -39,7 +48,7 @@ void printList(List* l) {
 }
 
 void push(List* l, int i) {
-  Node* node = makeNode(i);
+  Node* node = make_node(i);
 
   if (l->n == 0) {
     node->next = node->prev = NULL;
@@ -64,7 +73,7 @@ int pop(List* l) {
   Node* head = l->head;
   Node* next = head->next;
   int val = head->val;
-  freeNode(head);
+  free_node(head);
 
   next->prev = NULL;
   l->head = next;
@@ -76,7 +85,7 @@ int peek(List* l) {
   return l->head->val;
 }
 
-int getIndex(List* l, int i) {
+int get_index(List* l, int i) {
   Node* node = l->head;
   int j = 0;
   while (node != NULL) {
@@ -89,20 +98,20 @@ int getIndex(List* l, int i) {
   return 0;
 }
 
-int getHead(List* l) {
+int get_head(List* l) {
   return l->head->val;
 }
 
-int getTail(List* l) {
+int get_tail(List* l) {
   return l->tail->val;
 }
 
-int isEmpty(List* l) {
+int is_empty(List* l) {
   return l->n==0;
 }
  
 void enqueue(List* l, int i) {
-  Node* node = makeNode(i);
+  Node* node = make_node(i);
 
   if (l->n==0) {
     node->next = node->prev = NULL;    
