@@ -15,3 +15,6 @@ clean:
 
 debug: $(TARGET)
 	gdb $(BUILDDIR)/$(TARGET)
+
+run: $(TARGET)
+	$(BUILDDIR)/$(TARGET)
