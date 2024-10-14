@@ -9,6 +9,7 @@ typedef struct {
 } Graph;
 
 Graph* make_graph(int n);
+Graph* clone_graph(Graph* g);
 void free_graph(Graph* g);
 
 void print_graph(Graph* g);
@@ -28,6 +29,7 @@ void randomize_graph(Graph* g, int max);
 Array* dfs_find_path(Graph* g, int u, int v);
 Array* bfs_find_path(Graph* g, int u, int v);
 
-Graph* residual_network(Graph* g, Array* path);
+Graph* bfs_find_flow(Graph* g, int s, int t);
+Graph* residual_network(Graph* g, Graph* flow);
 
 #endif

@@ -2,7 +2,6 @@
 #include<stdlib.h>
 
 #include "graph.h"
-#include "list.h"
 #include "array.h"
 
 int main(int argc, char* argv[]) {
@@ -26,20 +25,33 @@ int main(int argc, char* argv[]) {
 	int len;
 	Array* arr = vertex_neighbors(g, rand()%n);
 
-	int u = rand()%n;
-	int v = rand()%n;
-	while (u == v) {
-		v = rand()%n;
+	int s = rand()%n;
+	int t = rand()%n;
+	while (s == t) {
+		t = rand()%n;
 	}
 
-	printf("Finding path from %d to %d\n", u, v);
-	Array* bfs_path = bfs_find_path(g, u, v);
-	Array* dfs_path = dfs_find_path(g, u, v);
-	print_array(bfs_path);
-	print_array(dfs_path);
+	/* Array* bfs_path = bfs_find_path(g, u, v); */
+	/* Array* dfs_path = dfs_find_path(g, u, v); */
+	/* print_array(bfs_path); */
+	/* print_array(dfs_path); */
+	/* free_array(bfs_path); */
+	/* free_array(dfs_path); */
+
+	printf("Finding flow from %d to %d\n", s, t);
+	Graph* flow = bfs_find_flow(g, s, t);
+	Graph* residual = residual_network(g, flow);
+
+	printf("GRAPH:\n");
+	print_graph(g);
+	printf("FLOW:\n");
+	print_graph(flow);
+	printf("RESIDUAL:\n");
+	print_graph(residual);
+
+	free_graph(residual);
+	free_graph(flow);
 	free_graph(g);
-	free_array(bfs_path);
-	free_array(dfs_path);
 
  	// List* l = make_list();	
  	// push(l, 1);

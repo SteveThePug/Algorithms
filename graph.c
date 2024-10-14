@@ -2,6 +2,7 @@
 #include "list.h"
 #include "array.h"
 
+#include <limits.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -18,6 +19,17 @@ Graph* make_graph(int n) {
 	}
 
 	return g;
+}
+
+Graph* clone_graph(Graph* g) {
+    int n = g->num_vtx;
+    Graph* clone = make_graph(n);
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<n; j++) {
+            clone->adj_mat[i][j] = g->adj_mat[i][j];
+        }
+    }
+    return clone;
 }
 
 // Free a graph
@@ -187,5 +199,54 @@ Array* bfs_find_path(Graph* g, int u, int v) {
 	return NULL;
 }
 
+//Find a flow for a network
+Graph* bfs_find_flow(Graph* g, int s, int t) {
+    int n = g->num_vtx;
+    // Make a graph that will contain the flow values
+    // Initialised to be 0 as required
+	Graph* flow = make_graph(n);
+	// Make a clone graph to do work on and change
+	Graph* temp = clone_graph(g);
+    // Find the first path
+	Array* path = bfs_find_path(temp, s, t);
+    
+    while (path != NULL) {
+        int min_capacity = INT_MAX;
+        // Find the min capacity to bottleneck the flow
+        for (int i=0; i<path->n-1; i++) {
+            int u = path->arr[i];
+            int v = path->arr[i+1];
+            int capacity = temp->adj_mat[u][v];
+            if (min_capacity > capacity) {
+                min_capacity = capacity;
+            }
+        }
+        // Add to the flow and subtract from the temp
+        for (int i=0; i<path->n-1; i++) {
+            int u = path->arr[i];
+            int v = path->arr[i+1];
+            flow->adj_mat[u][v] += min_capacity;
+            temp->adj_mat[u][v] -= min_capacity;
+        }
+        free_array(path);
+	    path = bfs_find_path(temp, s, t);
+    }
+
+
+    free_graph(temp);
+	return flow;
+}
+
 //Compute the residual flow matrix
-// Graph* residual_network(Graph* g, int* flow, int len)
+Graph* residual_network(Graph* g, Graph* flow) {
+	int n = g->num_vtx;
+	Graph* residual = clone_graph(g);
+
+    for (int i=0; i<n;i++) {
+        for (int j=0; j<n;j++) {
+            residual->adj_mat[i][j] -= flow->adj_mat[i][j];
+        }
+    }
+
+	return residual;
+}
