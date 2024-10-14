@@ -9,7 +9,7 @@
 //         Push(Head++)
 //          Pop(Head--)
 //      Dequeue(Head--)  (Tail++)Enqueue
-//           Peek(Head)
+//         Peek(Head  )
 
 List* make_list() {
   List* list = (List*)calloc(1, sizeof(List));
@@ -21,7 +21,7 @@ void free_list(List* l) {
   Node* next = l->head;
   while (next != NULL) {
     node=next;
-    next=node->prev;
+    next=node->next;
     free(node);
   }
   free(l);
