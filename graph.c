@@ -51,6 +51,16 @@ void free_graph(Graph *g)
 	free(g);
 }
 
+bool empty_graph(Graph *g) {
+	int n = g->num_vtx;
+	for (int i=0; i<n; i++) {
+		for (int j=0; j<n; j++) {
+			if (g->adj_mat[i][j] != 0) return false;
+		}
+	}
+	return true;
+}
+
 // Print the graph
 void print_graph(Graph *g)
 {
@@ -327,4 +337,73 @@ Graph *residual_network(Graph *g, Graph *flow)
 	}
 
 	return residual;
+}
+
+// Optimise the flow
+Graph *bfs_optimal_flow(Graph *g, int s, int t) {
+    int n = g->num_vtx;
+    // Make a naive flow
+    Graph *flow = bfs_find_flow(g, s, t);
+    // Compute the residual network
+    Graph *residual = residual_network(g, flow);
+    // Try to find another flow
+    Graph *flow_primed = bfs_find_flow(residual, s, t);
+    // If there is no other flow we are done
+    while (!empty_graph(flow_primed)) {
+        // Update the flow matrix
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                flow->adj_mat[i][j] += flow_primed->adj_mat[i][j];
+            }
+        }
+        // Update the residual network
+        free_graph(residual);
+        residual = residual_network(g, flow);
+        // Free the current flow prime and find another
+        free_graph(flow_primed);
+        flow_primed = bfs_find_flow(residual, s, t);
+    }
+    // Free the last flow prime and the residual network
+    free_graph(flow_primed);
+    free_graph(residual);
+
+    // Check for memory leaks by ensuring all dynamically allocated memory is freed
+    // Assuming clone_graph, make_graph, bfs_find_flow, residual_network dynamically allocate memory
+    // Assuming adj_mat is dynamically allocated within Graph structure
+    // Assuming no other dynamically allocated memory within Graph structure
+
+    // No additional steps needed as the function does not dynamically allocate memory
+    // that is not freed or reused within the function itself.
+
+    return flow;
+}
+
+Graph *dfs_optimal_flow(Graph *g, int s, int t) {
+    int n = g->num_vtx;
+    // Make a naive flow
+    Graph *flow = dfs_find_flow(g, s, t);
+    // Compute the residual network
+    Graph *residual = residual_network(g, flow);
+    // Try to find another flow
+    Graph *flow_primed = dfs_find_flow(residual, s, t);
+    // If there is no other flow we are done
+    while (!empty_graph(flow_primed)) {
+        // Update the flow matrix
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                flow->adj_mat[i][j] += flow_primed->adj_mat[i][j];
+            }
+        }
+        // Update the residual network
+        free_graph(residual);
+        residual = residual_network(g, flow);
+        // Free the current flow prime and find another
+        free_graph(flow_primed);
+        flow_primed = dfs_find_flow(residual, s, t);
+    }
+    // Free the last flow prime and the residual network
+    free_graph(flow_primed);
+    free_graph(residual);
+
+    return flow;
 }

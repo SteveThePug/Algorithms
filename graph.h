@@ -2,6 +2,7 @@
 #define GRAPH_H
 
 #include "array.h"
+#include <stdbool.h>
 
 typedef struct
 {
@@ -14,6 +15,7 @@ Graph *clone_graph(Graph *g);
 void free_graph(Graph *g);
 
 void print_graph(Graph *g);
+bool empty_graph(Graph *g);
 
 void add_edge(Graph *g, int u, int v, int c);
 Array *vertex_neighbors(Graph *g, int u);
@@ -34,5 +36,8 @@ Graph *bfs_find_flow(Graph *g, int s, int t);
 Graph *dfs_find_flow(Graph *g, int s, int t);
 
 Graph *residual_network(Graph *g, Graph *flow);
+
+Graph *bfs_optimal_flow(Graph *g, int s, int t);
+Graph *dfs_optimal_flow(Graph *g, int s, int t);
 
 #endif

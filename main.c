@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 	printf("Finding flow from %d to %d\n", s, t);
 	Graph *flow = bfs_find_flow(g, s, t);
 	Graph *residual = residual_network(g, flow);
+	Graph *optimal = bfs_optimal_flow(g, s, t);
 
 	printf("GRAPH:\n");
 	print_graph(g);
@@ -52,10 +53,15 @@ int main(int argc, char *argv[])
 	print_graph(flow);
 	printf("RESIDUAL:\n");
 	print_graph(residual);
+	printf("OPTIMAL:\n");
+	print_graph(optimal);
 
+	free_graph(optimal);
 	free_graph(residual);
 	free_graph(flow);
 	free_graph(g);
+
+
 
 	// List* l = make_list();
 	// push(l, 1);
