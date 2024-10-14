@@ -2,6 +2,7 @@
 #include<stdlib.h>
 
 #include "graph.h"
+#include "list.h"
 
 int main(int argc, char* argv[]) {
 	int n = 10;
@@ -29,6 +30,11 @@ int main(int argc, char* argv[]) {
 	int* path = dfs_find_path(&g, u, v, &p_len);
 	printf("u:%2d, v:%2d\n", u, v);
 	print_array(path, p_len);
+
+	printf("Working on list datastructure\n");
+	List* l = makeList();	
+	push(l, 10);
+	printList(l);
 
 	free_graph(&g);
 	return 0;

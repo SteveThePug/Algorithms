@@ -3,13 +3,20 @@
 
 typedef struct {
   int val;
-  struct Node* next, prev;
+  struct Node* next;
+  struct Node* prev;
 } Node;
 
 typedef struct {
-  Node* head, tail;
+  Node* head;
+  Node* tail;
   int n;
 } List;
+
+List* makeList();
+Node* makeNode(int i);
+
+void printList(List* l);
 
 int getIndex(List* l, int i);
 
