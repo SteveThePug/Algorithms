@@ -75,7 +75,10 @@ int pop(List* l) {
   int val = head->val;
   free_node(head);
 
-  next->prev = NULL;
+  if (next!=NULL) {
+    next->prev = NULL;
+  }
+
   l->head = next;
   l->n--;
   return val;
@@ -133,7 +136,10 @@ int dequeue(List* l) {
   int val = head->val;
   free(head);
 
-  next->prev = NULL;
+  if (next!=NULL) {
+    next->prev = NULL;
+  }
+
   l->head = next;
   l->n--;
   return val;

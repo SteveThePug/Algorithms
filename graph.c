@@ -1,6 +1,8 @@
 #include "graph.h"
+#include "list.h"
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <time.h>
 
@@ -79,24 +81,22 @@ void randomize_graph(Graph* g, int max) {
 int* dfs_find_path(Graph* g, int u, int v, int* len) {
 	int n = g->num_vtx;
 	// Make a list for checking if we have looked at the vertex
-	int* chk_vtx = calloc(n, sizeof(int)); 
-	chk_vtx[u] = 1;
-	// Make a stack for what verticies we should explore first and add the start vertex
-	int stk_count = 1;
-	int* stk = calloc(n, sizeof(int)); 
-	stk[0] = u;
-	// Allocate a path with at most n verticies
+	bool* chk_vtx = calloc(n, sizeof(bool)); 
+	chk_vtx[u] = true;
+	// Make a stack for what vertices we should explore first and add the start vertex
+	List* stack = make_list();
+	push(stack, u);
+	// Allocate a path with at most n vertices
 	int* path = malloc(n*sizeof(int));
 	int path_len = 0;
 
 	//Begin exploring
-	while (stk_count > 0) {
-		int current = stk[--stk_count];
-
+	while (!is_empty(stack)) {
+		int current = pop(stack);
 		path[path_len++] = current;
 
 		if (current == v) {
-			free(stk);
+			free_list(stack);
 			free(chk_vtx);
 			*len = path_len;
 			return realloc(path, path_len * sizeof(int));
@@ -108,15 +108,15 @@ int* dfs_find_path(Graph* g, int u, int v, int* len) {
 		for (int i=0;i<nbr_len;i++) {
 			int nbr = nbrs[i];
 			if (!chk_vtx[nbr]) {
-				stk[stk_count++] = nbr;
-				chk_vtx[nbr] = 1;
+				push(stack, nbr);
+				chk_vtx[nbr] = true;
 			}
 		}
 
 		free(nbrs);
 	}
 
-	free(stk);
+	free(stack);
 	free(chk_vtx);
 	*len = 0;
 	return realloc(path, 0);
@@ -125,17 +125,42 @@ int* dfs_find_path(Graph* g, int u, int v, int* len) {
 int* bfs_find_path(Graph* g, int u, int v, int* len) {
 	int n = g->num_vtx;
 	// Make a list for checking if we have looked at the vertex
-	int* chk_vtx = calloc(n, sizeof(int)); 
-	chk_vtx[u] = 1;
-	// Make a stack for what verticies we should explore first and add the start vertex
-	int que_count = 1;
-	int* que = calloc(n, sizeof(int)); 
-	que[0] = u;
-	// Allocate a path with at most n verticies
+	bool* chk_vtx = calloc(n, sizeof(bool)); 
+	chk_vtx[u] = true;
+	// Make a queue for what vertexes we should explore first and add the start vertex
+	List* queue = make_list();
+	enqueue(queue, u);
+	// Allocate a path with at most n vertexes
 	int* path = malloc(n*sizeof(int));
 	int path_len = 0;
 
-	free(que);
+	//Begin exploring
+	while (!is_empty(queue)) {
+		int current = dequeue(queue);
+		path[path_len++] = current;
+
+		if (current == v) {
+			free_list(queue);
+			free(chk_vtx);
+			*len = path_len;
+			return realloc(path, path_len * sizeof(int));
+		}
+
+		int nbr_len;
+		int* nbrs = vertex_neighbors(g, current, &nbr_len);
+
+		for (int i=0;i<nbr_len;i++) {
+			int nbr = nbrs[i];
+			if (!chk_vtx[nbr]) {
+				enqueue(queue, nbr);
+				chk_vtx[nbr] = true;
+			}
+		}
+
+		free(nbrs);
+	}
+
+	free(queue);
 	free(chk_vtx);
 	*len = 0;
 	return realloc(path, 0);
