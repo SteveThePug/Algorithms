@@ -1,34 +1,38 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "graph.h"
 #include "array.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
 	int n = 10;
 	int max = 5;
 
-	if (argc > 1) {
-		n=atoi(argv[1]);
+	if (argc > 1)
+	{
+		n = atoi(argv[1]);
 	}
 
-	if (argc > 2) {
+	if (argc > 2)
+	{
 		max = atoi(argv[2]);
 	}
 
 	// Using gdb, you can inspect the values using breakpoints
 	// call print_array(int*, n)
 	// call print_graph(Graph* g)
-	Graph* g = make_graph(n);
+	Graph *g = make_graph(n);
 	randomize_graph(g, max);
 
 	int len;
-	Array* arr = vertex_neighbors(g, rand()%n);
+	Array *arr = vertex_neighbors(g, rand() % n);
 
-	int s = rand()%n;
-	int t = rand()%n;
-	while (s == t) {
-		t = rand()%n;
+	int s = rand() % n;
+	int t = rand() % n;
+	while (s == t)
+	{
+		t = rand() % n;
 	}
 
 	/* Array* bfs_path = bfs_find_path(g, u, v); */
@@ -39,8 +43,8 @@ int main(int argc, char* argv[]) {
 	/* free_array(dfs_path); */
 
 	printf("Finding flow from %d to %d\n", s, t);
-	Graph* flow = bfs_find_flow(g, s, t);
-	Graph* residual = residual_network(g, flow);
+	Graph *flow = bfs_find_flow(g, s, t);
+	Graph *residual = residual_network(g, flow);
 
 	printf("GRAPH:\n");
 	print_graph(g);
@@ -53,8 +57,8 @@ int main(int argc, char* argv[]) {
 	free_graph(flow);
 	free_graph(g);
 
- 	// List* l = make_list();	
- 	// push(l, 1);
+	// List* l = make_list();
+	// push(l, 1);
 	// push(l, 2);
 	// push(l, 3);
 	// push(l, 4);

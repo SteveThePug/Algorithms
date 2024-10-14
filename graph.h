@@ -3,21 +3,22 @@
 
 #include "array.h"
 
-typedef struct {
-	int** adj_mat;
+typedef struct
+{
+	int **adj_mat;
 	int num_vtx;
 } Graph;
 
-Graph* make_graph(int n);
-Graph* clone_graph(Graph* g);
-void free_graph(Graph* g);
+Graph *make_graph(int n);
+Graph *clone_graph(Graph *g);
+void free_graph(Graph *g);
 
-void print_graph(Graph* g);
+void print_graph(Graph *g);
 
-void add_edge(Graph* g, int u, int v, int c);
-Array* vertex_neighbors(Graph* g, int u);
+void add_edge(Graph *g, int u, int v, int c);
+Array *vertex_neighbors(Graph *g, int u);
 
-void randomize_graph(Graph* g, int max);
+void randomize_graph(Graph *g, int max);
 
 /**
  * @brief Preforms a depth first search on a graph
@@ -26,10 +27,12 @@ void randomize_graph(Graph* g, int max);
  * @param v The end vertex
  * @return Array of vertecies of the array
  */
-Array* dfs_find_path(Graph* g, int u, int v);
-Array* bfs_find_path(Graph* g, int u, int v);
+Array *dfs_find_path(Graph *g, int u, int v);
+Array *bfs_find_path(Graph *g, int u, int v);
 
-Graph* bfs_find_flow(Graph* g, int s, int t);
-Graph* residual_network(Graph* g, Graph* flow);
+Graph *bfs_find_flow(Graph *g, int s, int t);
+Graph *dfs_find_flow(Graph *g, int s, int t);
+
+Graph *residual_network(Graph *g, Graph *flow);
 
 #endif

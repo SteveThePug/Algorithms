@@ -11,45 +11,54 @@
 //      Dequeue(Head--)  (Tail++)Enqueue
 //         Peek(Head  )
 
-List* make_list() {
-  List* list = (List*)calloc(1, sizeof(List));
+List *make_list()
+{
+  List *list = (List *)calloc(1, sizeof(List));
   return list;
 }
 
-void free_list(List* l) {
-  Node* node = l->head;
-  Node* next = l->head;
-  while (next != NULL) {
-    node=next;
-    next=node->next;
+void free_list(List *l)
+{
+  Node *node = l->head;
+  Node *next = l->head;
+  while (next != NULL)
+  {
+    node = next;
+    next = node->next;
     free(node);
   }
   free(l);
 }
 
-Node* make_node(int i) {
-  Node* n = (Node *)calloc(1, sizeof(Node));
+Node *make_node(int i)
+{
+  Node *n = (Node *)calloc(1, sizeof(Node));
   n->val = i;
   return n;
 }
 
-void free_node(Node* n) {
+void free_node(Node *n)
+{
   free(n);
 }
 
-void print_list(List* l) {
-  Node* node = l->head;
-  while (node != NULL) {
+void print_list(List *l)
+{
+  Node *node = l->head;
+  while (node != NULL)
+  {
     printf("%d ", node->val);
     node = node->next;
   }
   printf("\n");
 }
 
-void push(List* l, int i) {
-  Node* node = make_node(i);
+void push(List *l, int i)
+{
+  Node *node = make_node(i);
 
-  if (l->n == 0) {
+  if (l->n == 0)
+  {
     node->next = node->prev = NULL;
 
     l->head = l->tail = node;
@@ -57,24 +66,26 @@ void push(List* l, int i) {
     return;
   }
 
-  Node* head = l->head;
+  Node *head = l->head;
   head->prev = node;
 
   node->prev = NULL;
   node->next = head;
 
-  l->head=node;
+  l->head = node;
   l->n++;
   return;
 }
 
-int pop(List* l) {
-  Node* head = l->head;
-  Node* next = head->next;
+int pop(List *l)
+{
+  Node *head = l->head;
+  Node *next = head->next;
   int val = head->val;
   free_node(head);
 
-  if (next!=NULL) {
+  if (next != NULL)
+  {
     next->prev = NULL;
   }
 
@@ -83,59 +94,70 @@ int pop(List* l) {
   return val;
 }
 
-int peek(List* l) {
+int peek(List *l)
+{
   return l->head->val;
 }
 
-int get_index(List* l, int i) {
-  Node* node = l->head;
+int get_index(List *l, int i)
+{
+  Node *node = l->head;
   int j = 0;
-  while (node != NULL) {
-    if (j==i) {
+  while (node != NULL)
+  {
+    if (j == i)
+    {
       return node->val;
     }
-    node=node->next;
+    node = node->next;
     j++;
   }
   return 0;
 }
 
-int get_head(List* l) {
+int get_head(List *l)
+{
   return l->head->val;
 }
 
-int get_tail(List* l) {
+int get_tail(List *l)
+{
   return l->tail->val;
 }
 
-int is_empty(List* l) {
-  return l->n==0;
+int is_empty(List *l)
+{
+  return l->n == 0;
 }
- 
-void enqueue(List* l, int i) {
-  Node* node = make_node(i);
 
-  if (l->n==0) {
-    node->next = node->prev = NULL;    
+void enqueue(List *l, int i)
+{
+  Node *node = make_node(i);
+
+  if (l->n == 0)
+  {
+    node->next = node->prev = NULL;
     l->head = l->tail = node;
     l->n++;
     return;
   }
 
-  Node* tail = l->tail;
+  Node *tail = l->tail;
   tail->next = node;
   node->prev = tail;
   l->tail = node;
   l->n++;
 }
 
-int dequeue(List* l) {
-  Node* head = l->head;
-  Node* next = head->next;
+int dequeue(List *l)
+{
+  Node *head = l->head;
+  Node *next = head->next;
   int val = head->val;
   free(head);
 
-  if (next!=NULL) {
+  if (next != NULL)
+  {
     next->prev = NULL;
   }
 
@@ -144,14 +166,17 @@ int dequeue(List* l) {
   return val;
 }
 
-void reverse_list(List* l) {
-  List* temp_list = make_list();
+void reverse_list(List *l)
+{
+  List *temp_list = make_list();
 
-  while(!is_empty(l)) {
+  while (!is_empty(l))
+  {
     push(temp_list, pop(l));
   }
 
-  while(!is_empty(temp_list)) {
+  while (!is_empty(temp_list))
+  {
     enqueue(l, pop(temp_list));
   }
 
