@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -std=c11 -g
-SOURCES = main.c list.c graph.c array.c
+CFLAGS =  -g
+SOURCES = main.c list.c graph.c array.c display.c
 TARGET = main
 BUILDDIR = .build
 
