@@ -43,22 +43,42 @@ int main(int argc, char *argv[])
 	/* free_array(dfs_path); */
 
 	printf("Finding flow from %d to %d\n", s, t);
-	Graph *flow = bfs_find_flow(g, s, t);
-	Graph *residual = residual_network(g, flow);
-	Graph *optimal = bfs_optimal_flow(g, s, t);
+	Graph *bfs_optimal = bfs_optimal_flow(g, s, t);
+	Graph *dfs_optimal = dfs_optimal_flow(g, s, t);
 
-	printf("GRAPH:\n");
-	print_graph(g);
-	printf("FLOW:\n");
-	print_graph(flow);
-	printf("RESIDUAL:\n");
-	print_graph(residual);
-	printf("OPTIMAL:\n");
-	print_graph(optimal);
+	/* printf("GRAPH:\n"); */
+	/* print_graph(g); */
+	/* printf("FLOW:\n"); */
+	/* print_graph(flow); */
+	/* printf("RESIDUAL:\n"); */
+	/* print_graph(residual); */
 
-	free_graph(optimal);
-	free_graph(residual);
-	free_graph(flow);
+	/* int sum_bfs = 0; */
+	/* int sum_dfs = 0; */
+	/* for (int i = 0 ; i<n; i++) { */
+	/* 	sum_bfs+=bfs_optimal->adj_mat[i][t]; */
+	/* 	sum_dfs+=dfs_optimal->adj_mat[i][t]; */
+	/* } */
+
+	/* printf("OPTIMAL (BFS) |F|=%d:\n", sum_bfs); */
+	/* print_graph(bfs_optimal); */
+
+	/* printf("OPTIMAL (DFS) |F|=%d:\n", sum_dfs); */
+	/* print_graph(dfs_optimal); */
+
+	/* printf("BFS:%d\nDFS:%d\n", sum_bfs, sum_dfs); */
+
+	/* Graph* diff = clone_graph(bfs_optimal); */
+	/* for (int i=0; i < n; i++) { */
+	/* 	for (int j=0; j < n; j++) { */
+	/* 		diff->adj_mat[i][j] -= dfs_optimal->adj_mat[i][j]; */
+	/* 	} */
+	/* } */
+	/* print_graph(diff); */
+	/* free_graph(diff); */
+
+	free_graph(dfs_optimal);
+	free_graph(bfs_optimal);
 	free_graph(g);
 
 

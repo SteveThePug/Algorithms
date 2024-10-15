@@ -1,6 +1,7 @@
 #include "graph.h"
 #include "list.h"
 #include "array.h"
+#include "display.h"
 
 #include <limits.h>
 #include <stdlib.h>
@@ -69,7 +70,8 @@ void print_graph(Graph *g)
 	{
 		for (int j = 0; j < n; j++)
 		{
-			printf("%d ", g->adj_mat[i][j]);
+			int val = g->adj_mat[i][j];
+			pretty_print(val);
 		}
 		printf("\n");
 	}
@@ -239,16 +241,16 @@ Array *bfs_find_path(Graph *g, int u, int v)
 }
 
 // Find a flow for a network
-Graph *bfs_find_flow(Graph *g, int s, int t)
+Graph *bfs_optimal_flow(Graph *g, int s, int t)
 {
 	int n = g->num_vtx;
 	// Make a graph that will contain the flow values
 	// Initialised to be 0 as required
 	Graph *flow = make_graph(n);
 	// Make a clone graph to do work on and change
-	Graph *temp = clone_graph(g);
+	Graph *residual = clone_graph(g);
 	// Find the first path
-	Array *path = bfs_find_path(temp, s, t);
+	Array *path = bfs_find_path(residual, s, t);
 
 	while (path != NULL)
 	{
@@ -258,39 +260,44 @@ Graph *bfs_find_flow(Graph *g, int s, int t)
 		{
 			int u = path->arr[i];
 			int v = path->arr[i + 1];
-			int capacity = temp->adj_mat[u][v];
+			int capacity = residual->adj_mat[u][v];
 			if (min_capacity > capacity)
 			{
 				min_capacity = capacity;
 			}
 		}
-		// Add to the flow and subtract from the temp
+		// Add to the flow and subtract from the residual
 		for (int i = 0; i < path->n - 1; i++)
 		{
 			int u = path->arr[i];
 			int v = path->arr[i + 1];
 			flow->adj_mat[u][v] += min_capacity;
-			temp->adj_mat[u][v] -= min_capacity;
+			residual->adj_mat[u][v] -= min_capacity;
 		}
+		clear_term();
+		printf("BFS\n");
+		print_graph(flow);
+		sleep_mili(100);
+
 		free_array(path);
-		path = bfs_find_path(temp, s, t);
+		path = bfs_find_path(residual, s, t);
 	}
 
-	free_graph(temp);
+	free_graph(residual);
 	return flow;
 }
 
 // Find a flow for a network
-Graph *dfs_find_flow(Graph *g, int s, int t)
+Graph *dfs_optimal_flow(Graph *g, int s, int t)
 {
 	int n = g->num_vtx;
 	// Make a graph that will contain the flow values
 	// Initialised to be 0 as required
 	Graph *flow = make_graph(n);
 	// Make a clone graph to do work on and change
-	Graph *temp = clone_graph(g);
+	Graph *residual = clone_graph(g);
 	// Find the first path
-	Array *path = dfs_find_path(temp, s, t);
+	Array *path = dfs_find_path(residual, s, t);
 
 	while (path != NULL)
 	{
@@ -300,110 +307,28 @@ Graph *dfs_find_flow(Graph *g, int s, int t)
 		{
 			int u = path->arr[i];
 			int v = path->arr[i + 1];
-			int capacity = temp->adj_mat[u][v];
+			int capacity = residual->adj_mat[u][v];
 			if (min_capacity > capacity)
 			{
 				min_capacity = capacity;
 			}
 		}
-		// Add to the flow and subtract from the temp
+		// Add to the flow and subtract from the residual
 		for (int i = 0; i < path->n - 1; i++)
 		{
 			int u = path->arr[i];
 			int v = path->arr[i + 1];
 			flow->adj_mat[u][v] += min_capacity;
-			temp->adj_mat[u][v] -= min_capacity;
+			residual->adj_mat[u][v] -= min_capacity;
 		}
 		free_array(path);
-		path = dfs_find_path(temp, s, t);
+		clear_term();
+		printf("DFS\n");
+    print_graph(flow);
+		sleep_mili(100);
+		path = dfs_find_path(residual, s, t);
 	}
 
-	free_graph(temp);
+	free_graph(residual);
 	return flow;
-}
-
-// Compute the residual flow matrix
-Graph *residual_network(Graph *g, Graph *flow)
-{
-	int n = g->num_vtx;
-	Graph *residual = clone_graph(g);
-
-	for (int i = 0; i < n; i++)
-	{
-		for (int j = 0; j < n; j++)
-		{
-			residual->adj_mat[i][j] -= flow->adj_mat[i][j];
-		}
-	}
-
-	return residual;
-}
-
-// Optimise the flow
-Graph *bfs_optimal_flow(Graph *g, int s, int t) {
-    int n = g->num_vtx;
-    // Make a naive flow
-    Graph *flow = bfs_find_flow(g, s, t);
-    // Compute the residual network
-    Graph *residual = residual_network(g, flow);
-    // Try to find another flow
-    Graph *flow_primed = bfs_find_flow(residual, s, t);
-    // If there is no other flow we are done
-    while (!empty_graph(flow_primed)) {
-        // Update the flow matrix
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                flow->adj_mat[i][j] += flow_primed->adj_mat[i][j];
-            }
-        }
-        // Update the residual network
-        free_graph(residual);
-        residual = residual_network(g, flow);
-        // Free the current flow prime and find another
-        free_graph(flow_primed);
-        flow_primed = bfs_find_flow(residual, s, t);
-    }
-    // Free the last flow prime and the residual network
-    free_graph(flow_primed);
-    free_graph(residual);
-
-    // Check for memory leaks by ensuring all dynamically allocated memory is freed
-    // Assuming clone_graph, make_graph, bfs_find_flow, residual_network dynamically allocate memory
-    // Assuming adj_mat is dynamically allocated within Graph structure
-    // Assuming no other dynamically allocated memory within Graph structure
-
-    // No additional steps needed as the function does not dynamically allocate memory
-    // that is not freed or reused within the function itself.
-
-    return flow;
-}
-
-Graph *dfs_optimal_flow(Graph *g, int s, int t) {
-    int n = g->num_vtx;
-    // Make a naive flow
-    Graph *flow = dfs_find_flow(g, s, t);
-    // Compute the residual network
-    Graph *residual = residual_network(g, flow);
-    // Try to find another flow
-    Graph *flow_primed = dfs_find_flow(residual, s, t);
-    // If there is no other flow we are done
-    while (!empty_graph(flow_primed)) {
-        // Update the flow matrix
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                flow->adj_mat[i][j] += flow_primed->adj_mat[i][j];
-            }
-        }
-        // Update the residual network
-        free_graph(residual);
-        residual = residual_network(g, flow);
-        // Free the current flow prime and find another
-        free_graph(flow_primed);
-        flow_primed = dfs_find_flow(residual, s, t);
-    }
-    // Free the last flow prime and the residual network
-    free_graph(flow_primed);
-    free_graph(residual);
-
-    return flow;
 }
